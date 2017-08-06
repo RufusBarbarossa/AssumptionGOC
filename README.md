@@ -1,2 +1,2 @@
 # AssumptionGOC
-Assumption Greek Orthodox Church Website
+Assumption Greek Orthodox Church's Website
