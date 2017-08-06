@@ -1,0 +1,26 @@
+{
+  "name": "assumption-greek-orthodox-church-website",
+  "version": "1.0.0",
+  "description": "Assumption Greek Orthodox Church's Website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RufusBarbarossa/AssumptionGOC.git"
+  },
+  "author": "Alexandru Stanescu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RufusBarbarossa/AssumptionGOC/issues"
+  },
+  "homepage": "https://github.com/RufusBarbarossa/AssumptionGOC#readme",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "express": "^4.15.3",
+    "express-handlebars": "^3.0.0",
+    "formidable": "^1.1.1",
+    "mysql": "^2.14.1"
+  }
+}
