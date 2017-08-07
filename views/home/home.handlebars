@@ -1,0 +1,36 @@
+<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="10000" style="width:100%; margin: 0 auto">
+ <!-- Indicators -->
+ <ol class="carousel-indicators">
+  <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+  {{#times num}}
+  <li data-target="#myCarousel" data-slide-to={{this}}></li>
+  {{/times}}
+</ol>
+
+<!-- Wrapper for slides -->
+<div class="carousel-inner">
+  {{#each pics}}
+  {{#if @first}}
+  <div class="item active" style="width: 100%; max-height: 350px; background-color: black;">
+   {{else}}
+   <div class="item" style="width: 100%; max-height: 350px; background-color: black;">
+     {{/if}}
+     <img class="img-fluid" src={{this.loc}} alt={{this.name}} style="margin-left: auto; margin-right: auto; display: block;">
+   </div>
+   {{/each}}
+ </div>
+
+ <!-- Left and right controls -->
+ <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+   <span class="glyphicon glyphicon-chevron-left"></span>
+   <span class="sr-only">Previous</span>
+ </a>
+ <a class="right carousel-control" href="#myCarousel" data-slide="next">
+  <span class="glyphicon glyphicon-chevron-right"></span>
+  <span class="sr-only">Next</span>
+</a>
+</div>
+
+<div class="container" style="">
+  <p> Our church </p>
+</div>
