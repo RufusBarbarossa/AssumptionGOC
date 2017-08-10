@@ -1,0 +1,49 @@
+<div class="container-fluid">
+<div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+        <h1 class="text-center"> Log In </h1>
+    </div>
+    <div class="col-sm-3"></div>
+</div>
+
+<style>
+    @media (min-width: 978px) {
+        div.margined {
+            margin: 15%;
+        }
+    }
+</style>
+
+<div class="well margined" style="margin-top: 30px;">
+     {{#if failed}}
+        <div class="alert alert-danger alert-dismissable fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            Incorrect username or password
+        </div>
+    {{/if}}
+<form class="form-horizontal" action="/login" method="post">
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="username">Username:</label>
+        <div class="col-sm-9">
+            {{#if failed}}
+                <input type="text" class="form-control" name="username" id="username" value="{{un}}">
+            {{else}}
+                <input type="text" class="form-control" name="username" id="username" placeholder="{{un}}">
+            {{/if}}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="password">Password:</label>
+        <div class="col-sm-9"> 
+            <input type="password" class="form-control" name="password" id="password" placeholder="Enter password">
+        </div>
+    </div>
+    <div class="form-group"> 
+        <div class="col-sm-offset-2 col-sm-8">
+            <button type="submit" class="btn btn-default">Log In</button>
+        </div>
+    </div>
+</form>
+</div>
+</div>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <title> Assumption Greek Orthodox Church </title>
  <!-- Latest compiled and minified CSS -->
  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
@@ -23,254 +24,22 @@
    }
  });
 </script>
-
-<style> 
-  .navbar {
-    margin-bottom: 0px;
-  }
-  #grad {
-    background: #DFBC54; /* For browsers that do not support gradients */
-    background: -webkit-linear-gradient(#DFBC54, white); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(#DFBC54, white); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(#DFBC54, white); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(#DFBC54, white); /* Standard syntax */
-  }
-  html, body {
-    margin: 0;
-    height: 100%;
-  }
-  @media (max-width: 360px) {
-    #logo {
-      display: none;
-    }
-  }
-
-  @media (max-width: 550px) {
-    h1.header {
-      font-size: 7vw;
-    }
-    h3.header {
-      font-size: 4vw;
-    }
-  }
-  @media (min-width: 768px) {
-    .affix {
-      top:0;
-      width: 100%;
-      z-index: 9999 !important;
-    }
-
-    .affix ~ .container-fluid {
-      position: relative;
-      top: 50px;
-    }
-    .sidebar-nav {
-      padding: 9px 0;
-    }
-
-    .dropdown-menu .sub-menu {
-      left: 100%;
-      position: absolute;
-      top: 0;
-      visibility: hidden;
-      margin-top: -1px;
-    }
-
-    .dropdown-menu li:hover .sub-menu {
-      visibility: visible;
-    }
-
-    .dropdown:hover .dropdown-menu {
-      display: block;
-    }
-
-    .nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu {
-      margin-top: 0;
-    }
-
-    .navbar .sub-menu:before {
-      border-bottom: 7px solid transparent;
-      border-left: none;
-      border-right: 7px solid rgba(0, 0, 0, 0.2);
-      border-top: 7px solid transparent;
-      left: -7px;
-      top: 10px;
-    }
-    .navbar .sub-menu:after {
-      border-top: 6px solid transparent;
-      border-left: none;
-      border-right: 6px solid #fff;
-      border-bottom: 6px solid transparent;
-      left: 10px;
-      top: 11px;
-      left: -6px;
-    }
-    #overlay {
-      background-color: transparent; /*or semitransparent image*/
-      width: 100%;
-    }
-    @media (max-width: 1633px) {
-      #navbar-full {
-        width: 66.666667%;
-      }
-    }
-    @media (max-width: 1444px) {
-      #navbar-full {
-        width: 75%;
-      }
-    }
-    @media (max-width: 1290px) {
-      #navbar-full {
-        width: 100%;
-      }
-      #navbar-pre {
-        display: none;
-      }
-    }
-    @media (max-width: 992px) {
-      .navbar-header {
-        float: none;
-      }
-      .navbar-left,.navbar-right {
-        float: none !important;
-      }
-      .navbar-toggle {
-        display: block;
-      }
-      .navbar-collapse {
-        border-top: 1px solid transparent;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
-      }
-      .navbar-fixed-top {
-        top: 0;
-        border-width: 0 0 1px;
-      }
-      .navbar-collapse.collapse {
-        display: none!important;
-      }
-      .navbar-nav {
-        float: none!important;
-        margin-top: 7.5px;
-      }
-      .navbar-nav>li {
-        float: none;
-      }
-      .navbar-nav>li>a {
-        padding-top: 10px;
-        padding-bottom: 10px;
-      }
-      .collapse.in{
-        display:block !important;
-      }
-    }
-  }
-
-  .navbar-default {
-    background-color: #96293c;
-    border-color: #96293c;
-  }
-  .navbar-default .navbar-brand {
-    color: #ecf0f1;
-  }
-  .navbar-default .navbar-brand:hover,
-  .navbar-default .navbar-brand:focus {
-    color: #ecf0f1;
-  }
-  .navbar-default .navbar-text {
-    color: #ecf0f1;
-  }
-  .navbar-default .navbar-nav > li > a {
-    color: #ecf0f1;
-  }
-  .navbar-default .navbar-nav > li > a:hover,
-  .navbar-default .navbar-nav > li > a:focus {
-    color: #ecf0f1;
-  }
-  .navbar-default .navbar-nav > li > .dropdown-menu {
-    background-color: #96293c;
-  }
-  .navbar-default .navbar-nav > li > .dropdown-menu > li > a {
-    color: #ecf0f1;
-  }
-  .navbar-default .navbar-nav > li > .dropdown-menu > li > a:hover,
-  .navbar-default .navbar-nav > li > .dropdown-menu > li > a:focus {
-    color: #ecf0f1;
-    background-color: #f5bc40;
-  }
-  .navbar-default .navbar-nav > li > .dropdown-menu > li.divider {
-    background-color: #f5bc40;
-  }
-  .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
-  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
-  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
-    color: #ecf0f1;
-    background-color: #f5bc40;
-  }
-  .navbar-default .navbar-nav > .active > a,
-  .navbar-default .navbar-nav > .active > a:hover,
-  .navbar-default .navbar-nav > .active > a:focus {
-    color: #ecf0f1;
-    background-color: #f5bc40;
-  }
-  .navbar-default .navbar-nav > .open > a,
-  .navbar-default .navbar-nav > .open > a:hover,
-  .navbar-default .navbar-nav > .open > a:focus {
-    color: #ecf0f1;
-    background-color: #f5bc40;
-  }
-  .navbar-default .navbar-toggle {
-    border-color: #f5bc40;
-  }
-  .navbar-default .navbar-toggle:hover,
-  .navbar-default .navbar-toggle:focus {
-    background-color: #f5bc40;
-  }
-  .navbar-default .navbar-toggle .icon-bar {
-    background-color: #ecf0f1;
-  }
-  .navbar-default .navbar-collapse,
-  .navbar-default .navbar-form {
-    border-color: #ecf0f1;
-  }
-  .navbar-default .navbar-link {
-    color: #ecf0f1;
-  }
-  .navbar-default .navbar-link:hover {
-    color: #ecf0f1;
-  }
-
-  @media (max-width: 767px) {
-    .navbar-default .navbar-nav .open .dropdown-menu > li > a {
-      color: #ecf0f1;
-    }
-    .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
-    .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
-      color: #ecf0f1;
-    }
-    .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
-    .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
-    .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
-      color: #ecf0f1;
-      background-color: #f5bc40;
-    }
-  }
-</style>
 <meta charset="utf-8"> 
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
 </head>
 
 <body disabled="disabled">
-  <div class="container-fluid" style="background-image:url('images/header.jpg'); background-repeat: repeat-x;">
+  <div class="container-fluid" style="background-image:url('/images/base/header.jpg'); background-repeat: repeat-x;">
     <div class="row">
       <div id="logo" class="col-sm-2 col-sm-offset-2" style="margin-top: 10px; margin-bottom: 10px;">
-        <img src="/images/goarchlogo.png" style="float: right">
+        <img src="/images/base/goarchlogo.png" style="float: right">
       </div>
       <div class="col-md-4 col-sm-6">
         <h1 class="header" style="color: #852335;">Assumption Greek Orthodox Church</h1>
         <h3 class="header" style="color: #852335;">Morgantown, WV</h3>
       </div>
       <div id="icon" class="col-md-2 hidden-sm hidden-xs">
-        <img src = "/images/assumption.jpg" style="padding-top: 30px;">
+        <img src = "/images/base/assumption.jpg" style="padding-top: 30px;">
       </div>
     </div>
   </div>
@@ -294,8 +63,8 @@
               <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="/about/us">About Us</a></li>
-                <li><a href="/about/directions">Directions</a></li>
                 <li><a href="/about/community">Community</a></li>
+                <li><a href="/about/directions">Directions</a></li>
                 <li><a href="/about/priest">Parish Priest</a></li>
                 <li><a href="/about/council">Parish Council</a></li>
               </ul>
@@ -332,11 +101,11 @@
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Special Events
                       <span class="caret"></span></a>
                       <ul class="dropdown-menu">
-                        <li><a href="/specialevents/blessing">House Blessing</a></li>
-                        <li><a href="/specialevents/backpack">Backpack Program</a></li>
-                        <li><a href="/specialevents/picnic">Church Picnic</a></li>
-                        <li><a href="/specialevents/baklava">Baklava Fundraiser</a></li>
-                        <li><a href="/specialevents/bread">Easter Bread Fundraiser</a></li>
+                        <li><a href="/events/blessing">House Blessing</a></li>
+                        <li><a href="/events/backpack">Backpack Program</a></li>
+                        <li><a href="/events/picnic">Church Picnic</a></li>
+                        <li><a href="/events/baklava">Baklava Fundraiser</a></li>
+                        <li><a href="/events/bread">Easter Bread Fundraiser</a></li>
                       </ul>
                     </li>
                     {{#if login}}
@@ -345,13 +114,25 @@
 
                   </ul>
                   <ul class="nav navbar-nav navbar-right">
-                    <li class=""><a href="/logout">Contact Us</a></li>
+                    <li class=""><a href="/contact-us">Contact Us</a></li>
                   </ul>
                 </div>
               </nav>
-              <div id="grad" class="container-fluid">
+              <div id="grad" class="container-fluid" style="padding-bottom: 20px;">
                 <div class="row">
                   <div class="col-sm-offset-2 col-sm-8">
+                  {{#each alerts}}
+                      {{#if this.hasalert}}
+                      {{#switch this.type}}
+                          {{#case "Info"}}<div class="alert alert-info alert-dismissable" style="margin-top: 20px;">{{/case}}
+                          {{#case "Warning"}}<div class="alert alert-warning alert-dismissable" style="margin-top: 20px;">{{/case}}
+                          {{#case "Danger"}}<div class="alert alert-danger alert-dismissable " style="margin-top: 20px;">{{/case}}
+                      {{/switch}}
+                      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        {{this.alert_text}}
+                      </div>
+                      {{/if}}
+                  {{/each}}
                   {{{body}}}
                 </div>
               </div>

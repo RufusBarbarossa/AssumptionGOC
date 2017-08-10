@@ -1,0 +1,14 @@
+
+<div class="row">
+	<h2> This Week's Bulletin </h2>
+	<embed class="hidden-xs" src="{{first.url}}" type="application/pdf" height="600px" width="100%" class="responsive">
+	<p class="hidden-sm hidden-md hidden-lg">Embedded PDF Viewing is not available on mobile devices. View this week's bulletin <a href="{{first.url}}"> here </a> </p>
+</div>
+
+<div class="row">
+	<h2> Previous Bulletins </h2>
+	{{#each bulletins}}
+		<h3> For {{this.date}} </h3>
+		<p> Bulletin Can be found <a href="{{this.url}}">here</a> </p>
+	{{/each}}
+</div>

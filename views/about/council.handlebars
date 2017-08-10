@@ -1,0 +1,16 @@
+<div class="row">
+	<h1> Council Members </h1>
+</div>
+
+{{#each people}}
+{{#if @first}}
+<div class="row" style="padding-bottom: 15px;">
+{{else}}
+<div class="row" style="padding-bottom: 15px; padding-top: 15px; border-top: thick solid grey;">
+{{/if}}
+	<div class="col-xs-12" style="text-align: center">
+		<h2 class="header">{{this.role}}: {{this.name}} <img style="padding-left: 5%; float:right" class="img-responsive" src={{this.location}} alt="{{this.name}}'s image"></h3>
+		<p>{{this.description}}</p>
+	</div>
+</div>
+{{/each}}

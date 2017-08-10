@@ -1,0 +1,11 @@
+{{#if placeup}}
+<div class="row" style="">
+	<img style="margin: auto; width: 100%; max-height: 350px;" class="img-responsive" src="{{imgsrc}}" alt="Image of the {{name}}">
+</div>
+{{/if}}
+<div class="row">
+	<div class="col-xs-12">
+		<h1 class="header"> {{name}} {{#unless placeup}} <img style="float: right" class="img-responsive" src="{{imgsrc}}" alt="Image of the {{name}}"> {{/unless}}</h1>
+		<p> {{desc}} </p>
+	</div>
+</div>
