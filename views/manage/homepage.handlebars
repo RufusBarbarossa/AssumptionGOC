@@ -1,0 +1,111 @@
+<div class="container-fluid">
+<div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+        <h1 class="text-center"> Manage Homepage Carousel </h1>
+    </div>
+    <div class="col-sm-3"></div>
+</div>
+
+<style>
+    @media (min-width: 978px) {
+        div.margined {
+            margin: 15%;
+        }
+    }
+</style>
+
+<script>
+    var no = false;
+    function confirmDelete(id) {
+        event.stopPropagation();
+        if(no) {
+            no = !no;
+            return;
+        }
+        var res = confirm("Are you sure you would like to delete? This action cannot be undone.");
+        if(res == true) {
+            //redirect
+            window.location.replace("/manage/homepage/delete/" + id);
+        } else {
+            //do nothing
+        }
+    }
+
+    var allBtns = document.getElementsByClass('btn');
+
+    function stopthis() {
+        no = true;
+        event.stopPropagation();
+    }
+</script>
+
+<form class="form-horizontal" action="/manage/homepage" method="post">
+{{#each imgrows}}
+    <div class="row">
+        {{#each this.cols}}
+            <div class="col-md-2">
+                <div class="thumbnail" onclick="stopthis()">
+                    <label class="image-checkbox text-center" title={{this.name}}>
+                        <div style="position: relative; display: inline-block;">
+                            <img src="{{this.loc}}" alt="{{this.name}}" style="width:100%">
+                            <button style="position: absolute; top: 5px; right: 5px;" type="button" class="btn btn-default btn-sm" onclick="confirmDelete({{this.id}})">
+                                <span class="glyphicon glyphicon-trash"></span> 
+                            </button>
+                        </div>
+                        <div class="row" style="margin-top: 2%;">
+                            <div style="margin:auto;">
+                                <input type="hidden" name="selected" value="{{this.id}}0"/>
+                                {{#if this.in}}
+                                    <input type="checkbox" name="selected" value="{{this.id}}1" checked="checked"/>
+                                {{else}}
+                                    <input type="checkbox" name="selected" value="{{this.id}}1" />
+                                {{/if}}
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+{{/each}}
+    <div class="form-group"> 
+        <div class="col-sm-12 text-center">
+            <button type="submit" class="btn btn-default">Save</button>
+        </div>
+    </div>
+</form>
+
+<div class="well margined" style="margin-top: 32px; padding-top: 10px;">
+<h3 class="text-center" style="margin-top: 0; padding-bottom: 20px;"> Upload new file </h3>
+     {{#if failed}}
+        <div class="alert alert-danger alert-dismissable fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {{msg}}
+            </div>
+    {{/if}}
+<form class="form-horizontal" action="/manage/homepage/upload" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="title">Title:</label>
+        <div class="col-sm-9">
+            {{#if failed}}
+                <input type="text" class="form-control" name="title" id="title" value="{{name}}">
+            {{else}}
+                <input type="text" class="form-control" name="title" id="title" placeholder="{{name}}">
+            {{/if}}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="filetoupload">File:</label>
+        <div class="col-sm-9"> 
+            <input type="file" class="form-control" name="filetoupload" id="filetoupload">
+        </div>
+    </div>
+    <div class="form-group"> 
+        <div class="col-sm-offset-2 col-sm-8">
+            <button type="submit" class="btn btn-default">Upload</button>
+        </div>
+    </div>
+</form>
+</div>
+</div>

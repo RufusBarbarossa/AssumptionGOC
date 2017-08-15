@@ -1,0 +1,67 @@
+<style>
+    @media (min-width: 978px) {
+        div.margined {
+            margin: 15%;
+            margin-bottom: 5%;
+        }
+    }
+</style>
+
+{{#each orgs}}
+<div class="well" style="padding-bottom: 15px; margin-top: 10px; position: relative; background-color: #96293c;//#EDD99E">
+    <h1 class='text-center' style='color: white;'>Edit {{this.name}}'s information </h1>
+    <div class="well margined" style="margin-top: 32px; padding-top: 10px;">
+            <h2 class="text-center"> Edit Metadata </h2>
+            <form class="form-horizontal" action="/manage/orgs" method="post" enctype="multipart/form-data" id="{{this.ID}}">
+            <input type="text" class="form-control" name="id" id="id" value="{{this.ID}}" style="display: none;">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="title">Description:</label>
+                <textarea class="col-sm-9" style="height: 300px;" name="description" form="{{this.ID}}">{{this.description}}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="filetoupload">Image location:</label>
+                <div class="col-sm-9"> 
+                    <select form="{{this.ID}}" style="color: black; margin-top: 7px;" name="imageloc">
+                        <option value="up" {{#if this.up}}selected="selected"{{/if}}>Above</option>
+                        <option value="left" {{#unless this.up}}selected="selected"{{/unless}}>To the Right</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-9 col-sm-offset-2">
+                    <button type="submit" class="btn btn-default">Update</button>
+                </div>
+            </div>
+            </form>
+    </div>
+
+    <div class="well margined" style="margin-top: 32px; padding-top: 10px;">
+            <h3 class="text-center" style="margin-top: 0; padding-bottom: 20px;"> Edit image </h3>
+            {{#if failed}}
+                <div class="alert alert-danger alert-dismissable fade in">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    {{msg}}
+                </div>
+            {{/if}}
+        <form class="form-horizontal" action="/manage/orgs/upload" method="post" enctype="multipart/form-data" id="{{this.ID}}_img">
+            <input type="text" class="form-control" name="id" id="id" value="{{this.ID}}" style="display: none;">
+
+            <div class="form-group">
+                <h4 class="text-center"> Current Image </h4>
+                <img style="margin: auto; {{#if this.up}}width: 100%; max-height: 350px;{{/if}}" class="img-responsive" src={{this.location}} alt="{{this.name}}'s image">
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="filetoupload">File:</label>
+                <div class="col-sm-9"> 
+                    <input type="file" class="form-control" name="filetoupload" id="filetoupload">
+                </div>
+            </div>
+            <div class="form-group"> 
+            <div class="col-sm-offset-2 col-sm-8">
+                <button type="submit" class="btn btn-default">Upload</button>
+            </div>
+            </div>
+        </form>
+    </div>
+</div>
+{{/each}}

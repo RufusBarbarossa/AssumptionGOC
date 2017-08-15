@@ -1,0 +1,188 @@
+<style>
+    @media (min-width: 978px) {
+        div.margined {
+            margin: 15%;
+            margin-bottom: 5%;
+        }
+    }
+
+    .switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+	/* Hide default HTML checkbox */
+	.switch input {display:none;}
+
+	/* The slider */
+	.slider {
+  		position: absolute;
+  		cursor: pointer;
+  		top: 0;
+  		left: 0;
+  		right: 0;
+  		bottom: 0;
+  		background-color: #ccc;
+        -webkit-transition: .4s;
+  		transition: .4s;
+	}
+
+	.slider:before {
+  		position: absolute;
+  		content: "";
+  		height: 26px;
+  		width: 26px;
+  		left: 4px;
+  		bottom: 4px;
+  		background-color: white;
+        -webkit-transition: .4s;
+  		transition: .4s;
+	}
+
+	input:checked + .slider {
+  		background-color: #2196F3;
+		}
+
+	input:focus + .slider {
+  		box-shadow: 0 0 1px #2196F3;
+	}
+
+	input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+  		transform: translateX(26px);
+	}
+
+	/* Rounded sliders */
+	.slider.round {
+  		border-radius: 34px;
+	}
+
+	.slider.round:before {
+  		border-radius: 50%;
+	}
+</style>
+
+<script>
+    var no = false;
+    function confirmDelete(id) {
+        event.stopPropagation();
+        if(no) {
+            no = !no;
+            return;
+        }
+        var res = confirm("Are you sure you would like to delete? This action cannot be undone.");
+        if(res == true) {
+            //redirect
+            window.location.replace("/manage/alerts/delete/" + id);
+        } else {
+            //do nothing
+        }
+    }
+
+    function moveup(id) {
+        window.location.replace("/manage/pagealerts/moveup/" + id);
+    }
+
+    function movedown(id) {
+        window.location.replace("/manage/pagealerts/movedown/" + id);
+    }
+
+    function stopthis() {
+        no = true;
+        event.stopPropagation();
+    }
+</script>
+
+{{#each pagealerts}}
+	<div class="well" style="margin-top: 20px; color: white; background-color: #96293c; position: relative;">
+		<h1 class="text-center">Alert for URL: {{this.address}}</h1>
+		<button style="position: absolute; top: 15px; right: 20px;" type="button" class="btn btn-default btn-lg" onclick="confirmDelete({{this.id}})">
+                 <span class="glyphicon glyphicon-trash"></span> 
+        </button>
+        <button style="position: absolute; top: 15px; left:20px;" type="button" class="btn btn-default btn-lg" onclick="moveup({{this.id}})" {{#if @first}}disabled="disabled"{{/if}}>
+                <span class="glyphicon glyphicon-arrow-up"></span> 
+        </button>
+
+        <button style="position: absolute; top: 65px; left:20px;" type="button" class="btn btn-default btn-lg" onclick="movedown({{this.id}})"  {{#if @last}}disabled="disabled"{{/if}}>
+                <span class="glyphicon glyphicon-arrow-down"></span> 
+        </button>
+		<form class="form-horizontal" action="/manage/alerts" method="post" enctype="multipart/form-data" id="{{this.ID}}">
+            <input type="text" class="form-control" name="id" id="id" value="{{this.ID}}" style="display: none;">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="title">Message:</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="msg" id="msg" value="{{this.alert_text}}">
+                    </div>
+            </div> 
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="title">Is On:</label>
+                <div class="col-sm-9">
+                    <label class="switch"> <input type="checkbox" class="form-control" name="on" id="on" {{#if this.hasalert}}checked="checked"{{/if}}>
+                    		<span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="filetoupload">Type:</label>
+                <div class="col-sm-9"> 
+                    <select form="{{this.ID}}" style="color: black; margin-top: 7px;" name="type">
+                    	<option value="Info" {{#if this.isInfo}}selected="selected"{{/if}}>Info</option>
+                    	<option value="Warning" {{#if this.isWarning}}selected="selected"{{/if}}>Warning</option>
+                    	<option value="Danger" {{#if this.isDanger}}selected="selected"{{/if}}>Danger</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group"> 
+            <div class="col-sm-offset-2 col-sm-8">
+                <button type="submit" class="btn btn-default">Update</button>
+            </div>
+            </div>
+        </form>
+	</div>
+{{/each}}
+
+<div class="well" style="margin-top: 20px; color: white; background-color: #96293c; position: relative;">
+		<h1 class="text-center">New Alert</h1>
+		
+		<form class="form-horizontal" action="/manage/alerts/new" method="post" enctype="multipart/form-data" id="new">
+            <input type="text" class="form-control" name="id" id="id" value="{{this.ID}}" style="display: none;">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="title">URL:</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="url" id="url" placeholder="The URL. Use 'homepage' for homepage">
+                    </div>
+            </div> 
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="title">Message:</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="msg" id="msg" placeholder="Message">
+                    </div>
+            </div> 
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="title">Is On:</label>
+                <div class="col-sm-9">
+                    <label class="switch"> <input type="checkbox" class="form-control" name="on" id="on" checked="checked">
+                    		<span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="filetoupload">Type:</label>
+                <div class="col-sm-9"> 
+                    <select form="new" style="color: black; margin-top: 7px;" name="type">
+                    	<option value="Info">Info</option>
+                    	<option value="Warning">Warning</option>
+                    	<option value="Danger">Danger</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group"> 
+            <div class="col-sm-offset-2 col-sm-8">
+                <button type="submit" class="btn btn-default">Add Alert</button>
+            </div>
+            </div>
+        </form>
+	</div>

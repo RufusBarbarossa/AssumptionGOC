@@ -1,0 +1,22 @@
+    <div class="well margined" style="margin-top: 32px; padding-top: 10px;">
+            <h2 class="text-center"> Upload New Bulletin </h2>
+            <form class="form-horizontal" action="/manage/bulletin" method="post" enctype="multipart/form-data" id="{{this.ID}}">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="filetoupload">Date:</label>
+                <div class="col-sm-9">
+                    <input type="date" class="form-control" name="date" id="date">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="filetoupload">File:</label>
+                <div class="col-sm-9"> 
+                    <input type="file" class="form-control" name="filetoupload" id="filetoupload">
+                </div>
+            </div>
+            <div class="form-group"> 
+                <div class="col-sm-offset-2 col-sm-8">
+                    <button type="submit" class="btn btn-default">Upload</button>
+                </div>
+            </div>
+            </form>
+    </div>

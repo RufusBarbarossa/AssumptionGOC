@@ -1,0 +1,135 @@
+<style>
+    @media (min-width: 978px) {
+        div.margined {
+            margin: 15%;
+            margin-bottom: 5%;
+        }
+    }
+</style>
+
+<script>
+    var no = false;
+    function confirmDelete(id) {
+        event.stopPropagation();
+        if(no) {
+            no = !no;
+            return;
+        }
+        var res = confirm("Are you sure you would like to delete? This action cannot be undone.");
+        if(res == true) {
+            //redirect
+            window.location.replace("/manage/council/delete/" + id);
+        } else {
+            //do nothing
+        }
+    }
+
+    function moveup(id) {
+        window.location.replace("/manage/council/moveup/" + id);
+    }
+
+    function movedown(id) {
+        window.location.replace("/manage/council/movedown/" + id);
+    }
+
+    function stopthis() {
+        no = true;
+        event.stopPropagation();
+    }
+</script>
+
+{{#each people}}
+<div class="well" style="padding-bottom: 15px; margin-top: 10px; position: relative; background-color: #96293c;//#EDD99E">
+    <h1 class='text-center' style='color: white;'>Edit {{this.name}}'s information </h1>
+        <button style="position: absolute; top: 15px; right: 20px;" type="button" class="btn btn-default btn-lg" onclick="confirmDelete({{this.id}})">
+                 <span class="glyphicon glyphicon-trash"></span> 
+        </button>
+        <button style="position: absolute; top: 15px; left:20px;" type="button" class="btn btn-default btn-lg" onclick="moveup({{this.id}})" {{#if @first}}disabled="disabled"{{/if}}>
+                <span class="glyphicon glyphicon-arrow-up"></span> 
+        </button>
+
+        <button style="position: absolute; top: 65px; left:20px;" type="button" class="btn btn-default btn-lg" onclick="movedown({{this.id}})"  {{#if @last}}disabled="disabled"{{/if}}>
+                <span class="glyphicon glyphicon-arrow-down"></span> 
+        </button>
+    <div class="well margined" style="margin-top: 32px; padding-top: 10px;">
+            <h2 class="text-center"> Edit Metadata </h2>
+            <form class="form-horizontal" action="/manage/council/{{this.id}}/editdesc" method="post" enctype="multipart/form-data" id="{{this.id}}">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="title">Role:</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="role" id="role" value="{{this.role}}">
+                    </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="title">Description:</label>
+                <textarea class="col-sm-9" style="height: 300px;" name="description" form="{{this.id}}">{{this.description}}</textarea>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-9 col-sm-offset-2">
+                    <button type="submit" class="btn btn-default">Update</button>
+                </div>
+            </div>
+            </form>
+    </div>
+
+    <div class="well margined" style="margin-top: 32px; padding-top: 10px;">
+            <h3 class="text-center" style="margin-top: 0; padding-bottom: 20px;"> Edit image </h3>
+            {{#if failed}}
+                <div class="alert alert-danger alert-dismissable fade in">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    {{msg}}
+                </div>
+            {{/if}}
+        <form class="form-horizontal" action="/manage/council/upload/{{this.id}}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <h4 class="text-center"> Current Image </h4>
+                <img style="padding-left: 5%; margin: auto;" class="img-responsive" src={{this.location}} alt="{{this.name}}'s image">
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="filetoupload">File:</label>
+                <div class="col-sm-9"> 
+                    <input type="file" class="form-control" name="filetoupload" id="filetoupload">
+                </div>
+            </div>
+            <div class="form-group"> 
+            <div class="col-sm-offset-2 col-sm-8">
+                <button type="submit" class="btn btn-default">Upload</button>
+            </div>
+            </div>
+        </form>
+    </div>
+</div>
+{{/each}}
+
+<div class="well" style="padding-bottom: 15px; margin-top: 10px; position: relative; color: white; background-color: #96293c;//#EDD99E">
+    <h1 class="text-center" style="color: white;"> Add new Councilmember </h1>
+    <form class="form-horizontal" action="/manage/council/new" method="post" enctype="multipart/form-data" id="newform">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="title">Name:</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Name">
+                    </div>
+            </div> 
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="title">Role:</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="role" id="role" placeholder="role">
+                    </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="title">Description:</label>
+                <textarea class="col-sm-9" style="height: 300px; color: black" name="description" form="newform"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="filetoupload">File:</label>
+                <div class="col-sm-9"> 
+                    <input type="file" class="form-control" name="filetoupload" id="filetoupload">
+                </div>
+            </div>
+            <div class="form-group"> 
+            <div class="col-sm-offset-2 col-sm-8">
+                <button type="submit" class="btn btn-default">Upload</button>
+            </div>
+            </div>
+        </form>
+</div>

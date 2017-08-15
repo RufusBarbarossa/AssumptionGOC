@@ -7,6 +7,7 @@ var path = require('path');
 var bCrypt = require('bcrypt-nodejs');
 var mysql = require('mysql');
 var formidable = require('formidable');
+
 var hbs = exphbs.create({
 	defaultLayout: 'base',
 	helpers: {
@@ -77,26 +78,595 @@ var con = mysql.createConnection({
     }
 });
 
+app.all("/manage/*", function(req, res, next) {
+	if(!req.session['login']) {
+		error.show(401, res, "You must be logged in to view this")
+	} else {
+		next();
+	}
+});
+
+app.all("/manage", function(req, res, next) {
+	if(!req.session['login']) {
+		error.show(401, res, "You must be logged in to view this")
+	} else {
+		next();
+	}
+});
+
+app.get("/manage", function(req, res) {
+	res.render("manage/managehome", {
+		login: req.session['login']
+	});
+})
+
+app.get("/manage/homepage", function(req, res) {
+	var sql = "SELECT * FROM pictures WHERE pageid IS NULL"
+
+	con.query(sql, function(err, result) {
+		if(err) {
+			console.log(err);
+			error.show(500, res, "Could not Query Database")
+			return;
+		}
+		var numrows = result.length/6;
+		var indx = 0;
+		var imagerow = []
+		for(var i = 0; i < numrows; i ++) {
+			var cols = []
+			for(var j = 0; j < 6 && indx < result.length; j++) {
+				cols.push({
+					id: (result[indx])["id"],
+					loc:"/images/misc/" + (result[indx])["location"], 
+					name: (result[indx])["name"],
+					in: ((result[indx])["slideshow"])
+				});
+				indx ++;
+			}
+			imagerow.push({cols:cols});
+		}
+		res.render('manage/homepage', {
+			imgrows: imagerow,
+			login: req.session['login']
+		});
+	});
+})
+
+app.get("/manage/events", function(req, res) {
+	var sql = "SELECT * FROM events"
+	con.query(sql, function(err, data) {
+		if(err) {
+			console.log(err);
+			error.show(500, res, "Could not Query Database");
+			return;
+		}
+		var eventpics = new Array(data.length);
+		var numevents = 0;
+		console.log(data.length)
+		for(var i = 0; i < data.length; i ++) {
+			con.query("SELECT * FROM pictures WHERE pageid = " + data[i].ID, function(err, result) {
+				if(err) {
+					console.log(err);
+					error.show(500, res, "Could not Query Database")
+				}
+				var numrows = result.length/6;
+				var indx = 0;
+				var imagerow = []
+				var url = data[result[0].pageid-1].url
+				for(var i = 0; i < numrows; i ++) {
+					var cols = []
+					for(var j = 0; j < 6 && indx < result.length; j++) {
+						cols.push({
+							id: (result[indx])["id"],
+							loc:"/images/misc/" + (result[indx])["location"], 
+							name: (result[indx])["name"],
+							in: ((result[indx])["slideshow"]),
+							url: url
+						});
+						indx ++;
+					}
+					imagerow.push({cols:cols});
+				}
+				eventpics.splice(result[0].pageid-1, 0, imagerow);
+				numevents ++;
+				if(numevents == data.length) {
+					events = [];
+					for(var j = 0; j < data.length; j++) {
+						events.push({
+							name: data[j].name,
+							url: data[j].url,
+							description: data[j].description,
+							images: eventpics[j]
+						})
+					}
+					res.render('manage/events', {
+						events: events,
+						login: req.session['login']
+					})
+				}
+			})
+		}
+		
+	})
+})
+
+app.get('/manage/council', function(req, res) {
+	var sql = "SELECT * FROM council"
+	con.query(sql, function(err, result) {
+		if(err) {
+			error.show(500, res, "Failed to Query Database")
+			console.log(err)
+		}
+		for(var i = 0; i < result.length; i ++) {
+			result[i].location = "/images/councilmembers/" + result[i].location
+		}
+
+		res.render('manage/managecouncil', {
+			login: req.session['login'],
+			people: result
+		})
+	})
+});
+
+app.get('/manage/orgs', function(req, res) {
+	var sql = "SELECT * FROM organizations"
+	con.query(sql, function(err, result) {
+		if(err) {
+			error.show(500, res, "Failed to Query Database")
+			console.log(err)
+		}
+		console.log(result.length);
+		for(var i = 0; i < result.length; i ++) {
+			result[i].location = "/images/organizations/" + result[i].location
+			result[i].up = result[i].imageplace == "up"
+		}
+
+		res.render('manage/organizations', {
+			login: req.session['login'],
+			orgs: result
+		})
+	})
+})
+
+app.get('/manage/alerts', function(req, res) {
+	var sql = "SELECT * FROM pagealerts"
+	con.query(sql, function(err, data) {
+		for(var i = 0; i < data.length; i ++) {
+			data[i].isInfo = data[i].type == "Info";
+			data[i].isWarning = data[i].type == "Warning";
+			data[i].isDanger = data[i].type == "Danger";
+		}
+		console.log(data);
+		res.render('manage/alerts', {
+			login: req.session['login'],
+			pagealerts: data
+		})
+	})
+})
+
+app.post("/manage/council/*/editdesc", function(req, res) {
+	var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields) {
+    	if(err) {
+    		console.log(err)
+    	}
+    	var newdesc = fields.description
+    	var role = fields.role
+    	var sql = "UPDATE council SET description = ?, role = ? WHERE id = " + req.params['0'];
+    	con.query(sql, [newdesc, role], function(err, result) {
+    		if(err) {
+    			console.log(err)
+    			error.show(500, res, "Could Not Query Database")
+    			return;
+    		}
+    		console.log(result);
+    		res.redirect("/manage/council")
+    	}) 
+    })
+})
+
+app.post("/manage/events/*/editdesc", function(req, res) {
+	var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields) {
+    	if(err) {
+    		console.log(err)
+    	}
+    	var newdesc = fields.description
+    	var sql = "UPDATE events SET description = ? WHERE url = '" + req.params['0'] + "'";
+    	con.query(sql, newdesc, function(err, result) {
+    		if(err) {
+    			console.log(err)
+    			error.show(500, res, "Could Not Query Database")
+    			return;
+    		}
+    		res.redirect("/manage/events")
+    	}) 
+    })
+})
+
+app.post("/manage/orgs", function(req, res) {
+	var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields) {
+    	if(err) {
+    		console.log(err)
+    	}
+    	var newdesc = fields.description
+    	var imageloc = fields.imageloc
+    	var sql = "UPDATE organizations SET description = ?, imageplace = ? WHERE id = " + fields.id;
+    	con.query(sql, [newdesc, imageloc], function(err, result) {
+    		if(err) {
+    			console.log(err)
+    			error.show(500, res, "Could Not Query Database")
+    			return;
+    		}
+    		console.log(result);
+    		res.redirect("/manage/orgs")
+    	}) 
+    })
+})
+
+app.post("/manage/alerts", function(req, res) {
+	var form = new formidable.IncomingForm();
+	form.parse(req, function(err, fields) {
+		if(err) {
+			console.log(err);
+			error.show(500, res, "Could not Parse form");
+		}
+		console.log(fields.id);
+		var id = fields.id;
+		var on = fields.on ? 1 : 0
+		var sql = "UPDATE pagealerts SET hasalert = ?, alert_text = ?, type = ? WHERE id = " + id;
+		con.query(sql, [on, fields.msg, fields.type], function(err, data) {
+			if(err) {
+				console.log(err);
+				error.show(500, res, "Could not query Database")
+			}
+			res.redirect("/manage/alerts")
+		})
+	})
+})
+
+app.get("/manage/council/delete/*", function(req, res) {
+	var sql = "SELECT * FROM council WHERE id = ?"
+	con.query(sql, req.params['0'], function(err, result) {
+		if(err) {
+			console.log(err);
+			error.show(500, res, "Could Not Query Database");
+			return;
+		}
+		sql = "SELECT * FROM council WHERE location = ?" 
+		con.query(sql, result[0].location, function(err, data) {
+			if(err) {
+				console.log(err);
+				error.show(500, res, "Could not Query Database");
+				return;
+			}
+			if(data.length == 1) {
+				fs.unlink(process.cwd() + "/images/councilmembers/" + result[0].location, function(err, ret) {
+					if(err) {
+						console.log(err);
+					}
+				})
+			}
+
+			sql = "DELETE FROM council WHERE id = ?"
+			con.query(sql, req.params['0'], function(err, data) {
+				if(err) {
+					console.log(err);
+					error.show(500, res, "Could not Query Database")
+				}
+				res.redirect("/manage/council")
+			})
+		})
+	})
+});
+
+app.get("/manage/*/delete/*", function(req, res) {
+	var sql = "SELECT * FROM pictures WHERE id=?";
+	con.query(sql, req.params['1'], function(err, result) {
+		if(err) {
+			console.log(err)
+			error.show(500, res, "Could Not Query Database")
+			return;
+		}
+		sql = "SELECT * FROM pictures WHERE location=?";
+		con.query(sql, result[0].location, function(err, data) {
+			if(data.length == 1) {
+				fs.unlink(process.cwd() + "/images/misc/" + result[0]['location'], function(err, ret) {
+					if(err) {
+						console.log(err);
+					}
+				});
+			}
+			
+			var sql2 = "DELETE FROM pictures WHERE id = ?"
+			con.query(sql2, req.params['1'], function(err, data){
+				if(err) {
+					console.log(err)
+					error.show(500, res, "Could Not Query Database")
+					return;
+				}
+				console.log(data);
+				res.redirect("/manage/" + req.params['0']);
+			});
+		})
+			
+	})
+})
+
+app.post("/manage/council/upload/*", function(req, res) {
+	var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+    	if(err) {
+			console.log(err);
+			error.show(500, res, "Could not parse Form")
+			return;
+		}
+    	var oldpath = files.filetoupload.path;
+      	var newpath = process.cwd() + '/images/councilmembers/' + files.filetoupload.name;
+      	fs.rename(oldpath, newpath, function (err) {
+        	if (err) {
+        		console.log(err);
+				error.show(500, res, "could not move picture")
+				return;
+        	}
+        	var sql = "UPDATE council SET location = ? WHERE id = " + req.params['0'];
+        	con.query(sql, files.filetoupload.name, function(err, result) {
+        		if(err) {
+        			console.log(err);
+        			error.show(500, res, "Could not Query Database")
+        			return;
+				}
+				res.redirect('/manage/council');
+        	})
+      	});
+    })
+});
+
+app.post("/manage/orgs/upload", function(req, res) {
+	var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+    	if(err) {
+			console.log(err);
+			error.show(500, res, "Could not parse Form")
+			return;
+		}
+    	var oldpath = files.filetoupload.path;
+      	var newpath = process.cwd() + '/images/organizations/' + files.filetoupload.name;
+      	fs.rename(oldpath, newpath, function (err) {
+        	if (err) {
+        		console.log(err);
+				error.show(500, res, "could not move picture")
+				return;
+        	}
+        	var sql = "UPDATE organizations SET location = ? WHERE ID = " + fields.id;
+        	con.query(sql, files.filetoupload.name, function(err, result) {
+        		if(err) {
+        			console.log(err);
+        			error.show(500, res, "Could not Query Database")
+        			return;
+				}
+				res.redirect('/manage/orgs');
+        	})
+      	});
+    })
+});
+
+app.post("/manage/bulletin", function(req, res) {
+	var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+    	if(err) {
+			console.log(err);
+			error.show(500, res, "Could not parse Form")
+			return;
+		}
+    	var oldpath = files.filetoupload.path;
+      	var newpath = process.cwd() + '/bulletins/' + files.filetoupload.name;
+      	fs.rename(oldpath, newpath, function (err) {
+        	if (err) {
+        		console.log(err);
+				error.show(500, res, "could not move picture")
+				return;
+        	}
+        	var sql = "INSERT INTO bulletins (date, location) VALUES ?";
+        	var values = [
+        		[fields.date, files.filetoupload.name]
+        	]
+        	console.log()
+        	con.query(sql, [values], function(err, result) {
+        		if(err) {
+        			console.log(err);
+        			error.show(500, res, "Could not Query Database")
+        			return;
+				}
+				res.redirect('/manage/bulletin');
+        	})
+      	});
+    })
+});
+
+app.post("/manage/council/new", function(req, res) {
+	var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+    	if(err) {
+			console.log(err);
+			error.show(500, res, "Could not parse Form")
+			return;
+		}
+    	var oldpath = files.filetoupload.path;
+      	var newpath = process.cwd() + '/images/councilmembers/' + files.filetoupload.name;
+      	fs.rename(oldpath, newpath, function (err) {
+        	if (err) {
+        		console.log(err);
+				error.show(500, res, "could not move picture")
+				return;
+        	}
+        	var sql = "INSERT INTO council (name, role, description, location) VALUES ?";
+        	var values = [
+        		[fields.name, fields.role, fields.description, files.filetoupload.name]
+        	]
+        	con.query(sql, [values], function(err, result) {
+        		if(err) {
+        			console.log(err);
+        			error.show(500, res, "Could not Query Database")
+        			return;
+				}
+				res.redirect('/manage/council');
+        	})
+      	});
+    })
+})
+
+app.post("/manage/alerts/new", function(req, res) {
+	var form = formidable.IncomingForm();
+	form.parse(req, function(err, fields) {
+		if(err) {
+			console.log(err);
+			error.show(500, res, "Could not Parse Form")
+			return;
+		}
+		var sql = "INSERT INTO pagealerts (address, hasalert, alert_text, type) VALUES ?";
+		var values = [
+			[fields.url, (fields.on ? 1 : 0), fields.msg, fields.type]
+		]
+		con.query(sql, [values], function(err, data) {
+			if(err) {
+				console.log(err);
+				error.show(500, res, "Could not query database");
+			}
+			res.redirect("/manage/alerts")
+		})
+	})
+})
+
+app.get("/manage/*/movedown/*", function(req, res) {
+	var sql = "SELECT id FROM " + req.params['0'] +  " WHERE id > " + req.params['1'] + " ORDER BY id ASC";
+	con.query(sql, function(err, data) {
+		if(err) {
+			console.log(err);
+			error.show(500, res, "Could not query database");
+			return;
+		}
+		var id = req.params['1'];
+		var id2 = data[0].id;
+		var updateSQL = "UPDATE council SET id = ? WHERE id = ?"
+		con.query(updateSQL, ["-"+id, id], function(err, data) {
+			con.query(updateSQL, ["-"+id2, id2], function(err, data) {
+				con.query(updateSQL, [id2, "-"+id], function(err, data) {
+					con.query(updateSQL, [id, "-"+id2], function(err, data) {
+						res.redirect('/manage/council')
+					})
+				})
+			})
+		});
+	})
+});
+
+app.get("/manage/*/moveup/*", function(req, res) {
+	var sql = "SELECT id FROM " + req.params['0'] +  " WHERE id < " + req.params['1'] + " ORDER BY id DESC";
+	con.query(sql, function(err, data) {
+		if(err) {
+			console.log(err);
+			error.show(500, res, "Could not query database");
+			return;
+		}
+		var id = req.params['1'];
+		var id2 = data[0].id;
+		var updateSQL = "UPDATE council SET id = ? WHERE id = ?"
+		con.query(updateSQL, ["-"+id, id], function(err, data) {
+			con.query(updateSQL, ["-"+id2, id2], function(err, data) {
+				con.query(updateSQL, [id2, "-"+id], function(err, data) {
+					con.query(updateSQL, [id, "-"+id2], function(err, data) {
+						res.redirect('/manage/council')
+					})
+				})
+			})
+		});
+	})
+});
+
+app.post("/manage/*/upload", function(req, res) {
+	var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+    	if(err) {
+			console.log(err);
+			error.show(500, res, "Could not parse Form")
+			return;
+		}
+    	var oldpath = files.filetoupload.path;
+      	var newpath = process.cwd() + '/images/misc/' + files.filetoupload.name;
+      	fs.rename(oldpath, newpath, function (err) {
+        	if (err) {
+        		console.log(err);
+				error.show(500, res, "could not move picture")
+				return;
+        	}
+        	con.query("SELECT id FROM events WHERE url = ?", req.params['0'], function(err, result) {
+        		if(err) {
+        			console.log(err);
+        			error.show(500, res, "Could not Query Database")
+        			return;
+        		}
+        		var pageid = (result.count == 0) ? 'NULL' : result[0];
+        		var sql = "INSERT INTO pictures (name, location, slideshow, pageid) VALUES ?"
+        		var values = [
+        			[fields['title'], files.filetoupload.name, 1, pageid]
+        		]
+
+        		con.query(sql, [values], function(err, result) {
+        			if(err) {
+        				console.log(err);
+        				error.show(500, res, "Could not Query Database")
+        				return;
+					}
+					res.redirect('/manage/' + (result.count == 0) ? 'homepage' : 'events');
+        		})
+        	})
+      	});
+    })
+});
+
+app.post("/manage/*", function(req, res) {
+	var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+    	var all = fields.selected;
+    	var selected = [];
+    	var i = 0;
+    	while(i < all.length) {
+    		var curr = all[i];
+    		var nxt = (i+1 == all.length) ? null : all[i+1]
+    		if(nxt != null && curr.length == nxt.length && curr.substring(0, curr.length-1) == nxt.substring(0, nxt.length-1)){
+    			selected.push(['1', curr.substring(0, curr.length-1)])
+    			i += 2
+    		} else {
+    			selected.push(['0', curr.substring(0, curr.length-1)])
+    			i ++
+    		}
+    	}
+
+    	var num = 0;
+
+    	for(var j = 0; j < selected.length; j ++) {
+    		sql = "UPDATE pictures SET slideshow = " + selected[j][0] + " WHERE id = " + selected[j][1]
+    		con.query(sql, function(err, result) {
+    			if(err) {
+    				console.log(err);
+    				error.show(500, res, "Could not Query database");
+    			}
+    			num ++;
+    			if(num == selected.length) {
+    				res.redirect("/manage/" + (req.params['0'] == "homepage" ? "homepage" : "events"));
+    			}
+    		})	
+    	}
+    });
+});
+
 app.get('/*.*', function(req, res) {
 	var file = req.params['0'] + "." +  req.params['1']
 	fs.readFile(file, function(err, data) {
 		if(err) {
-			hbs.renderView('./views/misc/err.handlebars', {
-				error: "404",
-				message: "Our team of trained monkeys was unable to find this file",
-				layout: "clean"
-			}, function (err2, data2) {
-			if(err2) {
-				console.log(err);
-				res.writeHead(500, {'Content-Type': 'text/html'});
-				res.write("Internal Server Error");
-				return res.end();
-			}
-		
-			res.writeHead(404, {'Content-Type': 'text/html'});
-			res.write(data2);
-			return res.end();
-			});
+			error.show(500, res, "Our team of trained monkeys was unable to find this file")
 			return;
 		}
 		switch(path.extname(file)) {
@@ -149,11 +719,16 @@ app.get('/', function (req, res) {
 			pics.push({loc:"/images/misc/" + (result[i])["location"], name: (result[i])["name"]});
 		}
 		
-		res.render('home/home.handlebars', {
-			pics: pics,
-			num: pics.length-1,
-			login: req.session['login']
-		});
+		var sql = "SELECT * FROM bulletins WHERE date > NOW() - INTERVAL 30 DAY ORDER BY date DESC"
+		con.query(sql, function(err, data) {
+			res.render('home/home.handlebars', {
+				pics: pics,
+				num: pics.length-1,
+				bulletin: "/bulletins/" + data[0].location,
+				login: req.session['login']
+			});
+		})
+		
 	})
 });
 
